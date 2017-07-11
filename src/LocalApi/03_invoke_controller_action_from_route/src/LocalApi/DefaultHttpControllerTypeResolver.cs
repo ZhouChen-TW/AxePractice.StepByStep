@@ -16,16 +16,9 @@ namespace LocalApi
         
         public ICollection<Type> GetControllerTypes(IEnumerable<Assembly> assemblies)
         {
-            var types = new List<Type>();
-            foreach (var assembly in assemblies)
-            {
-                var collection = Assembly.Load(assembly.GetName()).GetTypes()
-                    .Where(s => s.BaseType == typeof(HttpController)).ToList();
-
-                types.AddRange(collection);
-            }
-
-            return types;
+            return assemblies.SelectMany(a => Assembly.Load(a.GetName()).GetTypes()
+                            .Where(t => t.IsPublic && !t.IsAbstract && t.IsSubclassOf(typeof(HttpController))))
+                            .ToList();
         }
 
         #endregion

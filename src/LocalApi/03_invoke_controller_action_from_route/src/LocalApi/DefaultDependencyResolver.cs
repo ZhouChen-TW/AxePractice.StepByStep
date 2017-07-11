@@ -32,7 +32,6 @@ namespace LocalApi
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public object GetService(Type type)
