@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LocalApi
 {
@@ -22,9 +23,11 @@ namespace LocalApi
          * default constructor will not be supported.
          */
 
+        readonly IList<Type> types;
+
         internal DefaultDependencyResolver(IEnumerable<Type> controllerTypes)
         {
-            throw new NotImplementedException();
+            this.types = controllerTypes.ToList();
         }
 
         public void Dispose()
@@ -34,7 +37,7 @@ namespace LocalApi
 
         public object GetService(Type type)
         {
-            throw new NotImplementedException();
+            return types.Contains(type) ? Activator.CreateInstance(type) : null;
         }
 
         #endregion
