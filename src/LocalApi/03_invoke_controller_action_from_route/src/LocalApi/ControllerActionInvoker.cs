@@ -9,7 +9,28 @@ namespace LocalApi
 {
     static class ControllerActionInvoker
     {
-        public static HttpResponseMessage InvokeAction(ActionDescriptor actionDescriptor)
+        #region Please modify the following code to pass the test
+
+        /*
+         * In previous practice. We refactored InvokeAction method. Now we have 
+         * renamed its name from "InvokeAction" to "InvokeActionInternal". The 
+         * InvokeAction method will no longer accept ActionDescriptor instance.
+         * Instead, it will create the ActionDescriptor instance from a matching
+         * route and an IDependencyResolver instance.
+         * 
+         * The matched route contains the type of the controller, the name of the
+         * action and the method constraint. It should use a resolver to create
+         * controller from its type.
+         */
+
+        public static HttpResponseMessage InvokeAction(HttpRoute matchedRoute, IDependencyResolver resolver)
+        {
+            return InvokeActionInternal(new ActionDescriptor(null, matchedRoute.ActionName, matchedRoute.MethodConstraint));
+        }
+
+        #endregion
+
+        static HttpResponseMessage InvokeActionInternal(ActionDescriptor actionDescriptor)
         {
             MethodInfo method = GetAction(actionDescriptor);
             if (method == null) { return new HttpResponseMessage(HttpStatusCode.NotFound); }
@@ -20,30 +41,13 @@ namespace LocalApi
             return Execute(actionDescriptor, method);
         }
 
-        #region Please modify the following code to pass the test
-
-        /*
-         * Good job! You have passed the first stage. Now we refactored your code
-         * to make the process clearer. Please refer to InvokeAction method.
-         * 
-         * However, we would like to add a constraint on method invokation -- the
-         * HttpMethod constraint. We assumes that all the action method of 
-         * HttpController should be annotated by attributes who implements
-         * IMethodProvider interface. If there is one attribute matches the constraint,
-         * the you should continue invoking action, or else just forbidden the request.
-         * 
-         * Please implements the logic in ProcessConstraint method.
-         */
-
         static HttpResponseMessage ProcessConstraint(MethodInfo method, HttpMethod methodConstraint)
         {
-            var methodProviders = method.GetCustomAttributes().OfType<IMethodProvider>();
-            return methodProviders.Any(m => m.Method == methodConstraint)
-                ? null
-                : new HttpResponseMessage(HttpStatusCode.MethodNotAllowed);
+            bool matchConstraint = Attribute.GetCustomAttributes(method)
+                .Where(a => a is IMethodProvider)
+                .Any(a => ((IMethodProvider) a).Method.Equals(methodConstraint));
+            return matchConstraint ? null : new HttpResponseMessage(HttpStatusCode.MethodNotAllowed);
         }
-
-        #endregion
 
         static HttpResponseMessage Execute(ActionDescriptor actionDescriptor, MethodInfo method)
         {
@@ -65,7 +69,8 @@ namespace LocalApi
             Type controllerType = controller.GetType();
             const BindingFlags controllerActionBindingFlags =
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
-            return controllerType.GetMethod(actionName, controllerActionBindingFlags);
+            MethodInfo method = controllerType.GetMethod(actionName, controllerActionBindingFlags);
+            return method;
         }
     }
 }
