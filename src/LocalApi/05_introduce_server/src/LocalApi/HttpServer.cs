@@ -1,9 +1,7 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using LocalApi.Routing;
 
 namespace LocalApi
 {
@@ -16,16 +14,31 @@ namespace LocalApi
          * You can add non-public fields and members for help but you should not modify
          * the public interfaces.
          */
-
+        readonly HttpConfiguration httpConfiguration;
         public HttpServer(HttpConfiguration configuration)
         {
-            throw new NotImplementedException();
+            httpConfiguration = configuration;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var route = httpConfiguration.Routes.GetRouteData(request);
+            if (route == null) return Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound));
+            try
+            {
+                var httpResponseMessage = ControllerActionInvoker.InvokeAction(
+                    route,
+                    httpConfiguration.CachedControllerTypes,
+                    httpConfiguration.DependencyResolver,
+                    httpConfiguration.ControllerFactory);
+
+                return Task.FromResult(httpResponseMessage);
+            }
+            catch
+            {
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+            }
         }
 
         #endregion
