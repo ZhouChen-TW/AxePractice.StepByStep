@@ -83,22 +83,17 @@ namespace LocalApi
             try
             {
                 var message = method.Invoke(actionDescriptor.Controller, null);
-                var responseMessage = message as HttpResponseMessage;
+                var responseMessage = message as Task<HttpResponseMessage>;
                 if (responseMessage != null)
                 {
-                    return Task.FromResult(responseMessage);
+                    return responseMessage;
                 }
-                var taskMessage = message as Task<HttpResponseMessage>;
-                if (taskMessage != null)
-                {
-                    return taskMessage;
-                }
+                return Task.FromResult((HttpResponseMessage) message);
             }
             catch
             {
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
             }
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotImplemented));
         }
 
         #endregion
