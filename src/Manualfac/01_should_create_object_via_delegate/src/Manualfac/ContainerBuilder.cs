@@ -19,6 +19,7 @@ namespace Manualfac
          * You can add non-public member functions or member variables as you like.
          */
         readonly Dictionary<Type, object> registers = new Dictionary<Type, object>();
+        int callBuildTime;
         public void Register<T>(Func<IComponentContext, T> func)
         {
             if(func == null) throw new ArgumentNullException(nameof(func));
@@ -27,7 +28,8 @@ namespace Manualfac
 
         public IComponentContext Build()
         {
-            if (registers.Any())
+            callBuildTime++;
+            if (callBuildTime == 1)
             {
                 return new ComponentContext(registers);
             }
