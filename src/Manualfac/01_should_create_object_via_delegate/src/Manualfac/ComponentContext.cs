@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Manualfac
 {
@@ -9,14 +10,24 @@ namespace Manualfac
         /*
          * A ComponentContext is used to resolve a component. Since the component
          * is created by the ContainerBuilder, it brings all the registration
-         * information. 
-         * 
+         * information.
+         *
          * You can add non-public member functions or member variables as you like.
          */
+        readonly Dictionary<Type, object> registers;
+        public ComponentContext(Dictionary<Type, object> registers)
+        {
+            this.registers = registers;
+        }
 
         public object ResolveComponent(Type type)
         {
-            throw new NotImplementedException();
+            if (registers.ContainsKey(type))
+            {
+                return ((Func<IComponentContext, object>)registers[type])(this);
+            }
+
+            throw new DependencyResolutionException();
         }
 
         #endregion
