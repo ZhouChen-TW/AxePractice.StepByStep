@@ -21,7 +21,7 @@ namespace LocalApi
             HttpConfiguration configuration,
             HttpRoute matchedRoute)
         {
-            request.Properties.Add(requestContextKey, new HttpRequestContext(configuration, matchedRoute));
+            request.Properties[requestContextKey] = new HttpRequestContext(configuration, matchedRoute);
         }
 
         public static HttpRequestContext GetRequestContext(this HttpRequestMessage request)
