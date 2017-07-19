@@ -1,4 +1,6 @@
 ﻿using System;
+using Manualfac.Activators;
+using Manualfac.Services;
 
 namespace Manualfac
 {
@@ -14,8 +16,11 @@ namespace Manualfac
              * Since we have changed the definition of activator. Please re-implement
              * the register extension method.
              */
-
-            throw new NotImplementedException();
+            if(func == null) throw new ArgumentNullException();
+            return cb.RegisterComponent(
+                new ComponentRegistration(
+                    new TypedService(typeof(T)),
+                    new DelegatedInstanceActivator(context => func(context))));
 
             #endregion
         }
@@ -24,14 +29,15 @@ namespace Manualfac
             this ContainerBuilder cb)
         {
             #region Please modify the following code to pass the test
-            
+
             /*
              * Since you have re-implement Register method, I am sure you can also
              * implement RegisterType method.
              */
 
-            throw new NotImplementedException();
-            
+            return cb.RegisterComponent(
+                new ComponentRegistration(new TypedService(typeof(T)), new ReflectiveActivator(typeof(T))));
+
             #endregion
         }
     }
