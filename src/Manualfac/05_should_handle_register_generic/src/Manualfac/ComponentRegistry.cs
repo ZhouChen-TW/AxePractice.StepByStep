@@ -35,11 +35,20 @@ namespace Manualfac
 
             /*
              * The following code will go through the source list and find the first source who
-             * can match the service. If no-one can match, then query failed. The function will 
+             * can match the service. If no-one can match, then query failed. The function will
              * return fasle. If we have found one. Then create a concrete component registration
              * and add it to serviceInfos for speed acceleration.
              */
-            throw new NotImplementedException();
+            var source = sources.Select(r => r.RegistrationFor(service)).FirstOrDefault(c => c != null);
+            if (source != null)
+            {
+                Register(source);
+                registration = source;
+                return true;
+            }
+
+            registration = null;
+            return false;
 
             #endregion
         }
