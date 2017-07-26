@@ -12,8 +12,8 @@ namespace Manualfac
              * The current scope lifetime indicates that the instance will be created and shared
              * within current lifetime scope.
              */
-
-            throw new NotImplementedException();
+            if(mostNestedLifetimeScope == null) throw new ArgumentNullException(nameof(mostNestedLifetimeScope));
+            return mostNestedLifetimeScope;
 
             #endregion
         }
