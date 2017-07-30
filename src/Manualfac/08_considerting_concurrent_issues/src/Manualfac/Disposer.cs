@@ -6,24 +6,31 @@ namespace Manualfac
     public class Disposer : Disposable
     {
         Stack<IDisposable> trackedItems = new Stack<IDisposable>();
+        readonly object syncObj = new object();
 
         public void AddItemsToDispose(object item)
         {
             var disposable = item as IDisposable;
             if (disposable == null) return;
-            trackedItems.Push(disposable);
+            lock (syncObj)
+            {
+                trackedItems.Push(disposable);
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                while (trackedItems.Count > 0)
+                lock (syncObj)
                 {
-                    trackedItems.Pop().Dispose();
-                }
+                    while (trackedItems.Count > 0)
+                    {
+                        trackedItems.Pop().Dispose();
+                    }
 
-                trackedItems = null;
+                    trackedItems = null;
+                }
             }
 
             base.Dispose(disposing);
