@@ -31,7 +31,7 @@ namespace LocalApi
              * A dependency scope will be generated for each request. And it will manage the
              * lifetime scopes for all items created during this request.
              */
-            IDependencyScope scope = null;
+            IDependencyScope scope = context.GetDependencyScope();
             #endregion
 
             try
@@ -78,7 +78,7 @@ namespace LocalApi
                 .Any(a => ((IMethodProvider) a).Method.Equals(methodConstraint));
             return matchConstraint ? null : new HttpResponseMessage(HttpStatusCode.MethodNotAllowed);
         }
-        
+
         static Task<HttpResponseMessage> Execute(
             ActionDescriptor actionDescriptor, MethodInfo method)
         {
