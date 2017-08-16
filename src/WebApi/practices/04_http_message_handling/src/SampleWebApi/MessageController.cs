@@ -1,5 +1,7 @@
-﻿using System;
+﻿using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.Web.Http;
 
 namespace SampleWebApi
@@ -14,7 +16,16 @@ namespace SampleWebApi
             // order to pass the test.
             // You can add new files if you want. But you cannot change any existed code.
 
-            throw new NotImplementedException();
+            var data = new {message = "Hello"};
+
+            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = Request.Headers.Accept.Contains(new MediaTypeWithQualityHeaderValue("application/json"))
+                    ? new ObjectContent(data.GetType(), data, new JsonMediaTypeFormatter())
+                    :new ObjectContent(typeof(string), data.message, new XmlMediaTypeFormatter())
+            };
+
+            return responseMessage;
 
             #endregion
         }
