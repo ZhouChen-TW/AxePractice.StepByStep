@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace HandleResponsePractice
@@ -22,7 +23,9 @@ namespace HandleResponsePractice
 
             #endregion
 
-            object content = null;
+            object content = JsonConvert.DeserializeAnonymousType(
+                await response.Content.ReadAsStringAsync(),
+                new { id = default(int), sizes = default(IEnumerable<string>) });
 
             Assert.Equal(2, content.GetPublicDeclaredProperties().Length);
             Assert.Equal(1, content.GetPropertyValue<int>("id"));
@@ -38,17 +41,21 @@ namespace HandleResponsePractice
 
             object content = await response.Content.ReadAsAsync<object>();
 
-            int id = default(int);
-            string name = default(string);
-            IEnumerable<string> sizes = default(IEnumerable<string>);
+            var result = JsonConvert.DeserializeAnonymousType(
+                content.ToString(),
+                new {id = default(int), name = default(string), sizes = default(IEnumerable<string>)});
+
+            int id = result.id;
+            string name = result.name;
+            IEnumerable<string> sizes = result.sizes;
 
             #region Please modifies the following code to pass the test
 
             // I want { id, name, sizes } here. Please get properties from the content. 
             // You cannot change any code beyond the region.
-            
+
             #endregion
-            
+
             Assert.Equal(1, id);
             Assert.Equal("Apple", name);
             Assert.Equal(new[] { "Large", "Medium", "Small" }, sizes);
