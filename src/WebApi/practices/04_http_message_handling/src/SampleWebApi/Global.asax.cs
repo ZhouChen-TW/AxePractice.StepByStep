@@ -24,6 +24,7 @@ namespace SampleWebApi
 
         static void InitFormatters(HttpConfiguration config)
         {
+            config.Formatters.XmlFormatter.UseXmlSerializer = true;
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = 
                 new CamelCasePropertyNamesContractResolver();
         }

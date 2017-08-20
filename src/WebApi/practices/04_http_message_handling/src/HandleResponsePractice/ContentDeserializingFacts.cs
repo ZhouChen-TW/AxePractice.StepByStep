@@ -25,7 +25,7 @@ namespace HandleResponsePractice
 
             #endregion
 
-            object content = JsonConvert.DeserializeAnonymousType(
+            content = JsonConvert.DeserializeAnonymousType(
                 await response.Content.ReadAsStringAsync(),
                 new { id = default(int), sizes = default(IEnumerable<string>) });
 
