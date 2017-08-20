@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
 using System.Web.Http.Filters;
+using Newtonsoft.Json.Linq;
+using SampleWebApi.Services;
 
 namespace SampleWebApi
 {
@@ -35,7 +40,8 @@ namespace SampleWebApi
          */
         public RestrictedUacAttribute(string userIdArgumentName)
         {
-            throw new NotImplementedException();
+            if (userIdArgumentName == null) throw new ArgumentNullException(nameof(userIdArgumentName));
+            this.userIdArgumentName = userIdArgumentName;
         }
 
         /*
@@ -49,7 +55,31 @@ namespace SampleWebApi
             HttpActionExecutedContext context,
             CancellationToken token)
         {
-            throw new NotImplementedException();
+            if (!context.Response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
+            var actionArguments = context.ActionContext.ActionArguments;
+            object userIdArgument;
+            actionArguments.TryGetValue(userIdArgumentName, out userIdArgument);
+
+            var userId = userIdArgument as long?;
+
+            if (!userId.HasValue)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            var content = context.Response.Content as ObjectContent;
+            if (content == null) return;
+            var result = await content.ReadAsAsync<JObject>(token);
+
+            var uacContractService = (RestrictedUacContractService) context.Request.GetDependencyScope()
+                .GetService(typeof(RestrictedUacContractService));
+            uacContractService.RemoveRestrictedInfo(userId.Value, result);
+
+            context.Response.Content = new ObjectContent(result.GetType(), result, content.Formatter);
         }
 
         #endregion
