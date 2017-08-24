@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Routing;
 using SessionModule.DomainModels;
 
 namespace SessionModule.Controllers
@@ -56,7 +57,10 @@ namespace SessionModule.Controllers
             // has logged into the system, it should contains the correct cookie
             // setter.
 
-            response.Headers.Location = new Uri(Url.Link("get session", new{token}));
+            var urlHelper = new UrlHelper(Request);
+            string link = urlHelper.Link("get session", new { token });
+            response.Headers.Location = new Uri(link);
+
             var cookie = new CookieHeaderValue(SessionCookieKey, token);
             response.Headers.AddCookies(new []{cookie});
             #endregion
