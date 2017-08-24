@@ -33,7 +33,7 @@ namespace SessionModule.Controllers
             }
 
             return Request.CreateResponse(
-                HttpStatusCode.OK, 
+                HttpStatusCode.OK,
                 new {Token = token, UserFullname = userSession.Username});
         }
 
@@ -56,8 +56,9 @@ namespace SessionModule.Controllers
             // has logged into the system, it should contains the correct cookie
             // setter.
 
-            throw new NotImplementedException();
-
+            response.Headers.Location = new Uri(Url.Link("get session", new{token}));
+            var cookie = new CookieHeaderValue(SessionCookieKey, token);
+            response.Headers.AddCookies(new []{cookie});
             #endregion
 
             return response;
@@ -72,7 +73,12 @@ namespace SessionModule.Controllers
                 #region Please implement the method removing the cookie
 
                 // Please clear the session cookie from the browser.
-                throw new NotImplementedException();
+                var cookieOverDue = new CookieHeaderValue(SessionCookieKey, string.Empty)
+                {
+                    Expires = DateTimeOffset.MinValue
+                };
+
+                response.Headers.AddCookies(new[] { cookieOverDue });
 
                 #endregion
             }

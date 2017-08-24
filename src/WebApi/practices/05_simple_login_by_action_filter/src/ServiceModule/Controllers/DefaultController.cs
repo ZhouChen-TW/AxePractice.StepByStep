@@ -17,7 +17,7 @@ namespace ServiceModule.Controllers
             #region Please implement the following code
 
             // This method will create response based on current logged in user.
-            throw new NotImplementedException();
+            response.Content = new StringContent($"<h1>This is our awesome API about page for {Request.GetUserSession().UserFullname}</h1>");
 
             #endregion
 

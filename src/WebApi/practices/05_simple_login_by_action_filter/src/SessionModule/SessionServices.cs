@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using SessionModule.DomainModels;
 
@@ -35,7 +34,14 @@ namespace SessionModule
             // The generated token will also be used as the returned value. Please note
             // that if the credential does not exist, it should return null.
 
-            throw new NotImplementedException();
+            if (!users.ContainsKey(credential))
+            {
+                return null;
+            }
+
+            var token = tokenGenerator.GenerateToken();
+            sessions[token] = new UserSession(users[credential]);
+            return token;
 
             #endregion
         }
