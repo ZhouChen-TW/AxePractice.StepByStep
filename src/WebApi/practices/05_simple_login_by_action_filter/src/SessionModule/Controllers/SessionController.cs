@@ -59,7 +59,7 @@ namespace SessionModule.Controllers
 
             var urlHelper = new UrlHelper(Request);
             string link = urlHelper.Link("get session", new { token });
-            response.Headers.Location = new Uri(link);
+            response.Headers.Location = new Uri(link, UriKind.RelativeOrAbsolute);
 
             var cookie = new CookieHeaderValue(SessionCookieKey, token);
             response.Headers.AddCookies(new []{cookie});
@@ -79,7 +79,7 @@ namespace SessionModule.Controllers
                 // Please clear the session cookie from the browser.
                 var cookieOverDue = new CookieHeaderValue(SessionCookieKey, string.Empty)
                 {
-                    Expires = DateTimeOffset.MinValue
+                    Expires = new DateTimeOffset(2016, 08, 28, 0, 0, 0, 20, TimeSpan.Zero)
                 };
 
                 response.Headers.AddCookies(new[] { cookieOverDue });

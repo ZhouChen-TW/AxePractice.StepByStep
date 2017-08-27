@@ -40,7 +40,10 @@ namespace SessionModule
             }
 
             var token = tokenGenerator.GenerateToken();
-            sessions[token] = new UserSession(users[credential]);
+            if(!sessions.TryAdd(token, new UserSession(users[credential])))
+            {
+                return null;
+            }
             return token;
 
             #endregion
