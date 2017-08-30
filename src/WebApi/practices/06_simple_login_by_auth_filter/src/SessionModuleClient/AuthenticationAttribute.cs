@@ -34,7 +34,7 @@ namespace SessionModuleClient
              * If user session cannot be retrived, then the context principal
              * should be an empty ClaimsPrincipal (unauthenticated).
              */
-            if(context == null) throw new ArgumentNullException(nameof(context));
+            if(context == null) return;
 
             var token = GetSessionToken(context);
             if (token == null)

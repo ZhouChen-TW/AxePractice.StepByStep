@@ -24,10 +24,9 @@ namespace SessionModuleClient
              * means, all users that is authenticated is allowd to access resources
              * annotated by this attribute.
              */
-            if (actionContext == null) throw new ArgumentNullException(nameof(actionContext));
             var claimsPrincipal = actionContext.RequestContext.Principal as ClaimsPrincipal;
-            var claimsIdentity = claimsPrincipal?.Identities.FirstOrDefault(c => c.AuthenticationType == "authentication");
-            if (claimsIdentity == null)
+            var claimsIdentity = claimsPrincipal?.Identity as ClaimsIdentity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
             {
                 actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
             }
