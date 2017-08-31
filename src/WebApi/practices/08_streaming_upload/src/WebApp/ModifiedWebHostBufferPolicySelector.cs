@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.Http.WebHost;
 
 namespace WebApp
@@ -14,14 +15,17 @@ namespace WebApp
              * request consuming and response returning policy should be used. If
              * you choose to use buffered request handling, then additional storage
              * space will be used as soon as the input stream of the request has been
-             * consumingm or no addtional storage will be used to store the request
+             * consuming or no addtional storage will be used to store the request
              * stream.
-             * 
-             * We are handling large file upload so we should not use streaming if 
+             *
+             * We are handling large file upload so we should not use streaming if
              * the content is something that we do not know (octet-stream).
              */
 
-            throw new NotImplementedException();
+            if(hostContext == null) throw new ArgumentNullException(nameof(hostContext));
+            var context = hostContext as HttpContextBase;
+            var request = context?.Request;
+            return request?.ContentType == null || request.ContentType.Equals("octet-stream");
 
             #endregion
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -78,7 +77,10 @@ namespace StreamingFacts
              * the whole stream into memory)
              */
 
-            throw new NotImplementedException();
+            return new HttpRequestMessage(HttpMethod.Post, "stream")
+            {
+                Content = streamContent
+            };
 
             #endregion
         }
@@ -95,7 +97,13 @@ namespace StreamingFacts
              * fileName in the correspond content releated headers.
              */
 
-            throw new NotImplementedException();
+            var streamContent = new StreamContent(countedStream);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("ContentDisposition")
+            {
+                FileName = fileName
+            };
+            return streamContent;
 
             #endregion
         }
