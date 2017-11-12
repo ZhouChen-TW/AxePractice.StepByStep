@@ -1,4 +1,6 @@
-﻿namespace Orm.Practice
+﻿using FluentNHibernate.Mapping;
+
+namespace Orm.Practice
 {
     public class Address
     {
@@ -8,11 +10,11 @@
          * But you cannot change the name of the property XD~.
          */
 
-        public int Id { get; set; }
-        public string AddressLine1 { get; set; }
-        public string AddressLine2 { get; set; }
-        public string City { get; set; }
-        public string PostalCode { get; set; }
+        public virtual int Id { get; protected set; }
+        public virtual string AddressLine1 { get; set; }
+        public virtual string AddressLine2 { get; set; }
+        public virtual string City { get; set; }
+        public virtual string PostalCode { get; set; }
 
         #endregion
     }
@@ -27,6 +29,18 @@
      * use `Id` as its name in C#, we should explicitly specify its name as
      * `AddressID`.
      */
+    public class AddressMap : ClassMap<Address>
+    {
+        public AddressMap()
+        {
+            Table("Person.Address");
+            Id(a => a.Id, "AddressID");
+            Map(e => e.AddressLine1);
+            Map(e => e.AddressLine2);
+            Map(e => e.City);
+            Map(e => e.PostalCode);
+        }
+    }
 
     #endregion
 }
