@@ -1,4 +1,5 @@
-﻿using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Automapping;
+using FluentNHibernate.Automapping.Alterations;
 
 namespace Orm.Practice
 {
@@ -24,21 +25,17 @@ namespace Orm.Practice
     /*
      * Before querying object using the `ISession` object, we have to map object
      * first. This can be done by using an mapping class.
-     * 
+     *
      * Since the `AddressID` is primary key of the table while we would like to
      * use `Id` as its name in C#, we should explicitly specify its name as
      * `AddressID`.
      */
-    public class AddressMap : ClassMap<Address>
+    public class AddressMap : IAutoMappingOverride<Address>
     {
-        public AddressMap()
+        public void Override(AutoMapping<Address> mapping)
         {
-            Table("Person.Address");
-            Id(a => a.Id, "AddressID");
-            Map(e => e.AddressLine1);
-            Map(e => e.AddressLine2);
-            Map(e => e.City);
-            Map(e => e.PostalCode);
+            mapping.Table("Person.Address");
+            mapping.Id(a => a.Id, "AddressID");
         }
     }
 
