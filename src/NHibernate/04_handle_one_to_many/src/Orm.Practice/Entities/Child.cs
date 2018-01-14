@@ -22,11 +22,12 @@ namespace Orm.Practice.Entities
         {
             #region Please modify the code to pass the test
 
+            Not.LazyLoad();
             Table("child");
             Id(c => c.ChildId).GeneratedBy.GuidNative();
             Map(c => c.Name);
             Map(c => c.IsForQuery);
-            References(c => c.Parent).Column("ParentID");
+            References(c => c.Parent).Column("ParentID").Not.LazyLoad();// do not create proxy for this prop
 
             #endregion
         }

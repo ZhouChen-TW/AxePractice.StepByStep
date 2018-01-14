@@ -17,7 +17,7 @@ namespace Orm.Practice.Entities
         public ParentMap()
         {
             #region Please modify the code to pass the test
-
+            Not.LazyLoad(); // do not create proxy for this class
             Table("parent");
             Id(p => p.ParentId).GeneratedBy.GuidNative();
             Map(p => p.Name);

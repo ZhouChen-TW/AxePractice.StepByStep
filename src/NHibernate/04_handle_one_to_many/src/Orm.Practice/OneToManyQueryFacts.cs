@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Orm.Practice.Entities;
 using Xunit;
@@ -26,6 +27,13 @@ namespace Orm.Practice
             Assert.Equal(
                 new[] { "child-1-for-parent-2", "child-2-for-parent-2", "child-3-for-parent-2" },
                 parents.Last().Children.Select(c => c.Name).OrderBy(n => n));
+        }
+
+        [Fact]
+        public void should()
+        {
+            var parent = Session.Query<Parent>().First();
+            Console.WriteLine(parent.Children.GetType());
         }
     }
 }
